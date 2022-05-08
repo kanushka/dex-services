@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "Welcome to Wallet Service"
+    return "Welcome to Auth Service"
 
 
 @app.route('/wallet/<uuid:user_id>')

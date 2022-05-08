@@ -9,32 +9,9 @@ from boto3.dynamodb.conditions import Key, Attr
 import uuid
 
 dynamo_client = boto3.client('dynamodb')
-wallet_table = 'Wallet'
 transaction_table = 'Transaction'
 
-
-def get_wallet(user_id):
-    return dynamo_client.query(
-        TableName=wallet_table,
-        KeyConditionExpression='UserId = :user_id',
-        ExpressionAttributeValues={
-            ':user_id': {'S': str(user_id)}
-        }
-    )
-
-
-def create_wallet(user_id, address):
-    return dynamo_client.put_item(
-        TableName=wallet_table,
-        Item={
-            'UserId': {'S': user_id},
-            'Address': {'S': address},
-            'CreatedAt': {'S': datetime.utcnow().isoformat()}
-        }
-    )
-
-
-def add_funds(address, currency, amount):
+def exchange(address, from_currency, from_amount, to_currency, to_amount):
     total = get_wallet_total(address)
 
     if total == 0:
@@ -43,10 +20,10 @@ def add_funds(address, currency, amount):
                 {
                     "M": {
                         "Currency": {
-                            "S": currency
+                            "S": from_currency
                         },
                         "Amount": {
-                            "N": amount
+                            "N": from_amount
                         }
                     }
                 }
@@ -54,18 +31,33 @@ def add_funds(address, currency, amount):
         }
     # TODO: add logic to update total attribute
 
-    return dynamo_client.put_item(
+    debit_response = dynamo_client.put_item(
         TableName=transaction_table,
         Item={
             'Id': {'S': str(uuid.uuid4())},
             'Address': {'S': address},
-            'Currency': {'S': currency},
-            'Amount': {'N': amount},
+            'Currency': {'S': from_currency},
+            'Amount': {'N': from_amount},
+            'Type': {'S': 'DR'},
+            'Total': total,
+            'CreatedAt': {'S': datetime.utcnow().isoformat()}
+        }
+    )
+
+    credit_response = dynamo_client.put_item(
+        TableName=transaction_table,
+        Item={
+            'Id': {'S': str(uuid.uuid4())},
+            'Address': {'S': address},
+            'Currency': {'S': to_currency},
+            'Amount': {'N': to_amount},
             'Type': {'S': 'CR'},
             'Total': total,
             'CreatedAt': {'S': datetime.utcnow().isoformat()}
         }
     )
+
+    return credit_response
 
 
 def get_wallet_total(address):

@@ -12,27 +12,20 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "Welcome to Wallet Service"
+    return "Welcome to Exchage Service"
 
 
-@app.route('/wallet/<uuid:user_id>')
-def get_wallet(user_id):
-    return jsonify(db.get_wallet(user_id))
-
-
-@app.route('/wallet', methods=['POST'])
-def create_wallet():
-    user_id = request.form["user_id"]
-    address = util.id_generator(64)
-    return jsonify(db.create_wallet(user_id, address))
-
-
-@app.route('/wallet/funds', methods=['POST'])
-def add_funds():
+@app.route('/exchange', methods=['POST'])
+def exchange():
     address = request.form["wallet"]
-    currency = request.form["currency"]
-    amount = request.form["amount"]
-    return jsonify(db.add_funds(address, currency, amount))
+    from_currency = request.form["from_currency"]
+    from_amount = request.form["amount"]
+    to_currency = request.form["to_currency"]
+
+    rate = util.get_exchange_rate(from_currency, to_currency)
+    to_amount = float(from_amount) * rate
+
+    return jsonify(db.exchange(address, from_currency, from_amount, to_currency, str(to_amount)))
 
 
 if __name__ == '__main__':
