@@ -3,9 +3,7 @@
 # Created: 2022.05.08
 
 from datetime import datetime
-import json
 import boto3
-from boto3.dynamodb.conditions import Key, Attr
 import uuid
 
 dynamo_client = boto3.client('dynamodb')
@@ -56,7 +54,7 @@ def exchange(address, from_currency, from_amount, to_currency, to_amount):
             'CreatedAt': {'S': datetime.utcnow().isoformat()}
         }
     )
-
+    #TODO: update this logic with batch_writer() method
     return credit_response
 
 

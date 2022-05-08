@@ -7,80 +7,52 @@ import json
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import uuid
+import util
 
 dynamo_client = boto3.client('dynamodb')
-wallet_table = 'Wallet'
-transaction_table = 'Transaction'
+user_table = 'User'
 
 
-def get_wallet(user_id):
+def get_user(username):
     return dynamo_client.query(
-        TableName=wallet_table,
-        KeyConditionExpression='UserId = :user_id',
+        TableName=user_table,
+        KeyConditionExpression='Username = :username',
         ExpressionAttributeValues={
-            ':user_id': {'S': str(user_id)}
+            ':username': {'S': str(username)}
         }
     )
 
 
-def create_wallet(user_id, address):
+def create_user(name, password):
     return dynamo_client.put_item(
-        TableName=wallet_table,
+        TableName=user_table,
         Item={
-            'UserId': {'S': user_id},
-            'Address': {'S': address},
+            'UserId': {'S': str(uuid.uuid4())},
+            'Name': {'S': name},
+            'Password': {'S': util.encrypt_string(password)},
             'CreatedAt': {'S': datetime.utcnow().isoformat()}
         }
     )
 
 
-def add_funds(address, currency, amount):
-    total = get_wallet_total(address)
-
-    if total == 0:
-        total = {
-            "L": [
-                {
-                    "M": {
-                        "Currency": {
-                            "S": currency
-                        },
-                        "Amount": {
-                            "N": amount
-                        }
-                    }
-                }
-            ]
-        }
-    # TODO: add logic to update total attribute
-
-    return dynamo_client.put_item(
-        TableName=transaction_table,
-        Item={
-            'Id': {'S': str(uuid.uuid4())},
-            'Address': {'S': address},
-            'Currency': {'S': currency},
-            'Amount': {'N': amount},
-            'Type': {'S': 'CR'},
-            'Total': total,
-            'CreatedAt': {'S': datetime.utcnow().isoformat()}
-        }
-    )
-
-
-def get_wallet_total(address):
+def check_password(username, password):
     response = dynamo_client.query(
-        TableName=transaction_table,
-        KeyConditionExpression='Address = :address',
+        TableName=user_table,
+        KeyConditionExpression='Username = :username',
         ExpressionAttributeValues={
-            ':address': {'S': address}
+            ':username': {'S': str(username)}
         },
-        ScanIndexForward=False,
-        Limit=1,
+        Limit=1
     )
 
+    encrypted_password = str(util.encrypt_string(password))
+    existing_password = ""
+    
     if 'Items' in response:
         if response['Items']:
-            return response['Items'][0]['Total']
-
-    return 0
+            existing_password = str(response['Items'][0]['Password'])
+    
+    return existing_password.__eq__(encrypted_password)
+# delete user table 
+# migrate
+# try this

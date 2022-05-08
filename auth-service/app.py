@@ -14,25 +14,23 @@ app = Flask(__name__)
 def index():
     return "Welcome to Auth Service"
 
-
-@app.route('/wallet/<uuid:user_id>')
-def get_wallet(user_id):
-    return jsonify(db.get_wallet(user_id))
-
-
-@app.route('/wallet', methods=['POST'])
-def create_wallet():
-    user_id = request.form["user_id"]
-    address = util.id_generator(64)
-    return jsonify(db.create_wallet(user_id, address))
+@app.route('/user/<uuid:username>')
+def get_user(username):
+    return jsonify(db.get_user(username))
 
 
-@app.route('/wallet/funds', methods=['POST'])
-def add_funds():
-    address = request.form["wallet"]
-    currency = request.form["currency"]
-    amount = request.form["amount"]
-    return jsonify(db.add_funds(address, currency, amount))
+@app.route('/user', methods=['POST'])
+def create_user():
+    username = request.form["username"]
+    password = request.form["password"]
+    return jsonify(db.create_user(username, password))
+
+
+@app.route('/auth', methods=['POST'])
+def auth():
+    username = request.form["username"]
+    password = request.form["password"]
+    return jsonify(db.check_password(username, password))
 
 
 if __name__ == '__main__':

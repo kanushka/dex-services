@@ -2,9 +2,9 @@
 # Student Id: MS21911262
 # Created: 2022.05.08
 
-import string
-import random
+import hashlib
 
-
-def id_generator(size=64, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
+def encrypt_string(hash_string):
+    sha_signature = \
+        hashlib.sha256(hash_string.encode()).hexdigest()
+    return sha_signature

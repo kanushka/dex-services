@@ -1,9 +1,11 @@
 {
     "TableName": "User",
     "KeySchema": [
-        { "AttributeName": "UserId", "KeyType": "HASH" }
+        { "AttributeName": "Username", "KeyType": "HASH" },
+        { "AttributeName": "UserId", "KeyType": "RANGE" }
     ],
     "AttributeDefinitions": [
+        { "AttributeName": "Username", "AttributeType": "S" },
         { "AttributeName": "UserId", "AttributeType": "S" }
     ],
     "ProvisionedThroughput": {
