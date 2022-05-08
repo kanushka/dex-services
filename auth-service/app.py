@@ -5,7 +5,6 @@
 from flask import Flask, jsonify
 from flask import request
 import db
-import util
 
 app = Flask(__name__)
 
@@ -34,5 +33,5 @@ def auth():
     return jsonify(db.check_password(username, password))
 
 
-if __name__ == '__main__':
-    app.run()
+# if __name__ == '__main__':
+#     app.run(debug=True, host='0.0.0.0', port=7007)

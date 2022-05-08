@@ -35,5 +35,5 @@ def add_funds():
     return jsonify(db.add_funds(address, currency, amount))
 
 
-if __name__ == '__main__':
-    app.run()
+# if __name__ == '__main__':
+#     app.run()

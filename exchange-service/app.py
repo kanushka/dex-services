@@ -28,5 +28,5 @@ def exchange():
     return jsonify(db.exchange(address, from_currency, from_amount, to_currency, str(to_amount)))
 
 
-if __name__ == '__main__':
-    app.run()
+# if __name__ == '__main__':
+#     app.run()

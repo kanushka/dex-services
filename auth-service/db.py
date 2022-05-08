@@ -3,9 +3,7 @@
 # Created: 2022.05.08
 
 from datetime import datetime
-import json
 import boto3
-from boto3.dynamodb.conditions import Key, Attr
 import uuid
 import util
 
