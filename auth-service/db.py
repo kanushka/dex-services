@@ -28,7 +28,7 @@ def create_user(name, password):
         TableName=user_table,
         Item={
             'UserId': {'S': str(uuid.uuid4())},
-            'Name': {'S': name},
+            'Username': {'S': name},
             'Password': {'S': util.encrypt_string(password)},
             'CreatedAt': {'S': datetime.utcnow().isoformat()}
         }
@@ -50,9 +50,15 @@ def check_password(username, password):
     
     if 'Items' in response:
         if response['Items']:
-            existing_password = str(response['Items'][0]['Password'])
-    
-    return existing_password.__eq__(encrypted_password)
-# delete user table 
-# migrate
-# try this
+            existing_password = str(response['Items'][0]['Password']['S'])
+
+    if existing_password.__eq__(encrypted_password):
+        return {
+            'Login': True,
+            'Token': str(uuid.uuid4()) #TODO: update token generation with JWT
+        }
+    else:
+        return {
+            'Login': False,
+        }
+

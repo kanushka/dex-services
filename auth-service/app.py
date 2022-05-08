@@ -14,7 +14,8 @@ app = Flask(__name__)
 def index():
     return "Welcome to Auth Service"
 
-@app.route('/user/<uuid:username>')
+
+@app.route('/user/<string:username>')
 def get_user(username):
     return jsonify(db.get_user(username))
 
