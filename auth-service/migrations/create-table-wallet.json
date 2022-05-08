@@ -1,0 +1,15 @@
+{
+    "TableName": "Wallet",
+    "KeySchema": [
+        { "AttributeName": "UserId", "KeyType": "HASH" },
+        { "AttributeName": "Address", "KeyType": "RANGE" }
+    ],
+    "AttributeDefinitions": [
+        { "AttributeName": "UserId", "AttributeType": "S" },
+        { "AttributeName": "Address", "AttributeType": "S" }
+    ],
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": 5,
+        "WriteCapacityUnits": 5
+    }
+}
