@@ -7,9 +7,19 @@ import boto3
 import uuid
 
 dynamo_client = boto3.client('dynamodb')
+user_table = 'User'
 wallet_table = 'Wallet'
 transaction_table = 'Transaction'
 
+def get_user(email):
+    return dynamo_client.query(
+        TableName=user_table,
+        KeyConditionExpression='Email = :email',
+        ExpressionAttributeValues={
+            ':email': {'S': str(email)}
+        },
+        ProjectionExpression='UserId,Email,CreatedAt'
+    )
 
 def get_wallet(user_id):
     return dynamo_client.query(

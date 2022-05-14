@@ -6,7 +6,7 @@
                     "UserId": {
                         "S": "23607c2a-ce73-11ec-9d64-0242ac120002"
                     },
-                    "Username": {
+                    "Email": {
                         "S": "Zula Sauron"
                     },
                     "Password": {
@@ -21,7 +21,7 @@
                     "UserId": {
                         "S": "f926f1dd-45b2-4e23-a5d6-f885e5209a9f"
                     },
-                    "Username": {
+                    "Email": {
                         "S": "Daud Galatea"
                     },
                     "Password": {

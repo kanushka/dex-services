@@ -11,35 +11,46 @@ dynamo_client = boto3.client('dynamodb')
 user_table = 'User'
 
 
-def get_user(username):
+def get_user(email):
     return dynamo_client.query(
         TableName=user_table,
-        KeyConditionExpression='Username = :username',
+        KeyConditionExpression='Email = :email',
         ExpressionAttributeValues={
-            ':username': {'S': str(username)}
+            ':email': {'S': str(email)}
         },
-        ProjectionExpression='UserId,Username,CreatedAt'
+        ProjectionExpression='UserId,Email,CreatedAt'
     )
 
 
-def create_user(name, password):
+def get_full_user(email):
+    return dynamo_client.query(
+        TableName=user_table,
+        KeyConditionExpression='Email = :email',
+        ExpressionAttributeValues={
+            ':email': {'S': str(email)}
+        }
+    )
+
+
+def create_user(email, password, name):
     return dynamo_client.put_item(
         TableName=user_table,
         Item={
             'UserId': {'S': str(uuid.uuid4())},
-            'Username': {'S': name},
-            'Password': {'S': util.encrypt_string(password)},
+            'Email': {'S': email},
+            'Password': {'S': password},
+            'Name': {'S': name},
             'CreatedAt': {'S': datetime.utcnow().isoformat()}
         }
     )
 
 
-def check_password(username, password):
+def check_password(email, password):
     response = dynamo_client.query(
         TableName=user_table,
-        KeyConditionExpression='Username = :username',
+        KeyConditionExpression='Email = :email',
         ExpressionAttributeValues={
-            ':username': {'S': str(username)}
+            ':email': {'S': str(email)}
         },
         Limit=1
     )

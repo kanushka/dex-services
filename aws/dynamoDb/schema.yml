@@ -4,12 +4,12 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        - AttributeName: "Username"
+        - AttributeName: "Email"
           AttributeType: "S"
         - AttributeName: "UserId"
           AttributeType: "S"
       KeySchema:
-        - AttributeName: "Username"
+        - AttributeName: "Email"
           KeyType: "HASH"
         - AttributeName: "UserId"
           KeyType: "RANGE"

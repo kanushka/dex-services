@@ -7,7 +7,20 @@ import boto3
 import uuid
 
 dynamo_client = boto3.client('dynamodb')
+user_table = 'User'
 transaction_table = 'Transaction'
+
+
+def get_user(email):
+    return dynamo_client.query(
+        TableName=user_table,
+        KeyConditionExpression='Email = :email',
+        ExpressionAttributeValues={
+            ':email': {'S': str(email)}
+        },
+        ProjectionExpression='UserId,Email,CreatedAt'
+    )
+
 
 def exchange(address, from_currency, from_amount, to_currency, to_amount):
     total = get_wallet_total(address)
@@ -54,7 +67,7 @@ def exchange(address, from_currency, from_amount, to_currency, to_amount):
             'CreatedAt': {'S': datetime.utcnow().isoformat()}
         }
     )
-    #TODO: update this logic with batch_writer() method
+    # TODO: update this logic with batch_writer() method
     return credit_response
 
 
