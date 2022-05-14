@@ -1,0 +1,480 @@
+AWSTemplateFormatVersion: 2010-09-09
+Metadata:
+  "AWS::CloudFormation::Designer":
+    058cccb8-db08-47f9-a913-bb6b0670c77b:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 120
+        "y": -10
+      z: 1
+      embeds: []
+    03d41b7d-2669-4217-8288-be5b81392058:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 120
+        "y": 60
+      z: 1
+      embeds: []
+    ed794dd7-71f5-41d3-9711-28c15d70976c:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 120
+        "y": 120
+      z: 1
+      embeds: []
+    52073879-a57f-4dd9-b392-05aa5757f195:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 440
+        "y": -60
+      z: 1
+      embeds: []
+      dependson:
+        - 96a435ba-e086-4af2-ad6a-3cb3d55daf78
+    25b658a3-92ab-41f9-85aa-4c2f33ffd370:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 270
+        "y": 30
+      z: 1
+      embeds: []
+    96a435ba-e086-4af2-ad6a-3cb3d55daf78:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 550
+        "y": -150
+      z: 1
+      embeds: []
+    ffdac18c-7d17-4588-9db4-ed509a6f4d0b:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 470
+        "y": 100
+      z: 1
+      embeds: []
+    176e2a11-ed35-46c7-b222-3fbcbacd8e02:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 270
+        "y": 90
+      z: 1
+      embeds: []
+    7dae8e48-26db-4572-bf46-a07d18630029:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 270
+        "y": 150
+      z: 1
+      embeds: []
+    6efe9680-e1bf-42aa-9c17-0f8dcb236144:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 650
+        "y": -20
+      z: 1
+      embeds: []
+    ce989346-c2ff-41f8-ad1c-09983873aad2:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 650
+        "y": 60
+      z: 1
+      embeds: []
+    50124b0e-df0a-4dd1-b98e-7fe7d9373c32:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 650
+        "y": 140
+      z: 1
+      embeds: []
+    781b460a-bb2d-44d9-b1a0-686f49dbb08d:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 520
+        "y": 250
+      z: 0
+      embeds: []
+  "AWS::CloudFormation::Interface":
+    ParameterGroups:
+      - Label:
+          default: "Network Configuration"
+        Parameters:
+          - awsDefaultRegion
+          - vpcId
+          - securityGroupIDs
+          - subnetIDs
+      - Label:
+          default: "Amazon IAM Configuration"
+        Parameters:
+          - awsAccessKeyId
+          - awsSecretAccessKey
+Parameters:
+  awsAccessKeyId:
+    Type: String
+    Default: key
+  awsSecretAccessKey:
+    Type: String
+    Default: secret
+  awsDefaultRegion:
+    Type: String
+    Default: us-east-1
+  appEnv:
+    Type: String
+    Default: production
+    AllowedValues:
+      - development
+      - production
+  vpcId:
+    Type: String
+    Default: vpc-0d3639e4a9c375134
+  securityGroupIDs:
+    Type: CommaDelimitedList
+    Default: sg-02c05caceab275ae5
+  subnetIDs:
+    Type: CommaDelimitedList
+    Default: "subnet-088cec813cbc9690a,subnet-0f524945a7ba0b8b5"
+Resources:
+  userTdEx:
+    Type: "AWS::ECS::TaskDefinition"
+    Properties:
+      Family: userTdEx
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: .5 vCPU
+      Memory: 1 GB
+      RuntimePlatform:
+        CpuArchitecture: X86_64
+        OperatingSystemFamily: LINUX
+      ExecutionRoleArn: "arn:aws:iam::659246662061:role/ecsTaskExecutionRole"
+      ContainerDefinitions:
+        - LogConfiguration:
+            Options:
+              awslogs-group: /ecs/userTdEx
+              awslogs-region: us-east-1
+              awslogs-stream-prefix: ecs
+              awslogs-create-group: "true"
+            LogDriver: awslogs
+          Name: userTdEx
+          Image: "659246662061.dkr.ecr.us-east-1.amazonaws.com/user:latest"
+          Essential: true
+          PortMappings:
+            - ContainerPort: "5000"
+              Protocol: tcp
+          Environment:
+            - Name: AWS_ACCESS_KEY_ID
+              Value: !Ref awsAccessKeyId
+            - Name: AWS_SECRET_ACCESS_KEY
+              Value: !Ref awsSecretAccessKey
+            - Name: AWS_DEFAULT_REGION
+              Value: !Ref awsDefaultRegion
+            - Name: appEnv
+              Value: !Ref awsAccessKeyId
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: 058cccb8-db08-47f9-a913-bb6b0670c77b
+  walletTdEx:
+    Type: "AWS::ECS::TaskDefinition"
+    Properties:
+      Family: walletTdEx
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: .5 vCPU
+      Memory: 1 GB
+      RuntimePlatform:
+        CpuArchitecture: X86_64
+        OperatingSystemFamily: LINUX
+      ExecutionRoleArn: "arn:aws:iam::659246662061:role/ecsTaskExecutionRole"
+      ContainerDefinitions:
+        - LogConfiguration:
+            Options:
+              awslogs-group: /ecs/walletTdEx
+              awslogs-region: us-east-1
+              awslogs-stream-prefix: ecs
+              awslogs-create-group: "true"
+            LogDriver: awslogs
+          Name: walletTdEx
+          Image: "659246662061.dkr.ecr.us-east-1.amazonaws.com/wallet:latest"
+          Essential: true
+          PortMappings:
+            - ContainerPort: "5000"
+              Protocol: tcp
+          Environment:
+            - Name: AWS_ACCESS_KEY_ID
+              Value: !Ref awsAccessKeyId
+            - Name: AWS_SECRET_ACCESS_KEY
+              Value: !Ref awsSecretAccessKey
+            - Name: AWS_DEFAULT_REGION
+              Value: !Ref awsDefaultRegion
+            - Name: appEnv
+              Value: !Ref awsAccessKeyId
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: 03d41b7d-2669-4217-8288-be5b81392058
+  exchangeTdEx:
+    Type: "AWS::ECS::TaskDefinition"
+    Properties:
+      Family: exchangeTdEx
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: .5 vCPU
+      Memory: 1 GB
+      RuntimePlatform:
+        CpuArchitecture: X86_64
+        OperatingSystemFamily: LINUX
+      ExecutionRoleArn: "arn:aws:iam::659246662061:role/ecsTaskExecutionRole"
+      ContainerDefinitions:
+        - LogConfiguration:
+            Options:
+              awslogs-group: /ecs/exchangeTdEx
+              awslogs-region: us-east-1
+              awslogs-stream-prefix: ecs
+              awslogs-create-group: "true"
+            LogDriver: awslogs
+          Name: exchangeTdEx
+          Image: "659246662061.dkr.ecr.us-east-1.amazonaws.com/exchange:latest"
+          Essential: true
+          PortMappings:
+            - ContainerPort: "5000"
+              Protocol: tcp
+          Environment:
+            - Name: AWS_ACCESS_KEY_ID
+              Value: !Ref awsAccessKeyId
+            - Name: AWS_SECRET_ACCESS_KEY
+              Value: !Ref awsSecretAccessKey
+            - Name: AWS_DEFAULT_REGION
+              Value: !Ref awsDefaultRegion
+            - Name: appEnv
+              Value: !Ref awsAccessKeyId
+    Metadata:
+      "AWS::CloudFormation::Designer":
+        id: ed794dd7-71f5-41d3-9711-28c15d70976c
+  dexlkClusterEx:
+    Type: "AWS::ECS::Cluster"
+    Properties:
+      CapacityProviders:
+        - FARGATE
+        - FARGATE_SPOT
+      ClusterName: dexlkClusterEx
+      ClusterSettings:
+        - Name: containerInsights
+          Value: disabled
+      Configuration:
+        ExecuteCommandConfiguration:
+          Logging: DEFAULT
+  userTargetGroupEx:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      Name: userTargetGroupEx
+      VpcId: !Ref vpcId
+      Protocol: HTTP
+      Port: "5000"
+      TargetType: ip
+  walletTargetGroupEx:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      Name: walletTargetGroupEx
+      VpcId: !Ref vpcId
+      Protocol: HTTP
+      Port: "5000"
+      TargetType: ip
+  exchangeTargetGroupEx:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      Name: exchangeTargetGroupEx
+      VpcId: !Ref vpcId
+      Protocol: HTTP
+      Port: "5000"
+      TargetType: ip
+  dexlkLoadBalancerEx:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      Name: dexlkLoadBalancerEx
+      SecurityGroups: !Ref securityGroupIDs
+      Subnets: !Ref subnetIDs
+      Type: application
+  dexlkListenerEx:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref userTargetGroupEx
+          Type: forward
+      LoadBalancerArn: !Ref dexlkLoadBalancerEx
+      Port: 80
+      Protocol: HTTP
+  walletListenerRuleEx:
+    Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
+    Properties:
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref walletTargetGroupEx
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - /wallet*
+      ListenerArn: !Ref dexlkListenerEx
+      Priority: 1
+  exchangeListenerRuleEx:
+    Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
+    Properties:
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref exchangeTargetGroupEx
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - /exchange*
+      ListenerArn: !Ref dexlkListenerEx
+      Priority: 2
+  userServiceEx:
+    Type: 'AWS::ECS::Service'
+    Properties:
+      Cluster: !Ref dexlkClusterEx
+      CapacityProviderStrategy:
+        - CapacityProvider: FARGATE
+          Base: 0
+          Weight: 1
+      TaskDefinition: !Ref userTdEx
+      ServiceName: userServiceEx
+      DesiredCount: 1
+      LoadBalancers:
+        - ContainerName: userContainerEx
+          ContainerPort: 5000
+          TargetGroupArn: !Ref userTargetGroupEx
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups: !Ref securityGroupIDs
+          Subnets: !Ref subnetIDs
+      PlatformVersion: LATEST
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+    DependsOn: dexlkListenerEx
+  walletServiceEx:
+    Type: 'AWS::ECS::Service'
+    Properties:
+      Cluster: !Ref dexlkClusterEx
+      CapacityProviderStrategy:
+        - CapacityProvider: FARGATE
+          Base: 0
+          Weight: 1
+      TaskDefinition: !Ref walletTdEx
+      ServiceName: walletServiceEx
+      DesiredCount: 1
+      LoadBalancers:
+        - ContainerName: walletContainerEx
+          ContainerPort: 5000
+          TargetGroupArn: !Ref walletTargetGroupEx
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups: !Ref securityGroupIDs
+          Subnets: !Ref subnetIDs
+      PlatformVersion: LATEST
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+    DependsOn: dexlkListenerEx
+  exchangeServiceEx:
+    Type: 'AWS::ECS::Service'
+    Properties:
+      Cluster: !Ref dexlkClusterEx
+      CapacityProviderStrategy:
+        - CapacityProvider: FARGATE
+          Base: 0
+          Weight: 1
+      TaskDefinition: !Ref exchangeTdEx
+      ServiceName: exchangeServiceEx
+      DesiredCount: 1
+      LoadBalancers:
+        - ContainerName: exchangeContainerEx
+          ContainerPort: 5000
+          TargetGroupArn: !Ref exchangeTargetGroupEx
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups: !Ref securityGroupIDs
+          Subnets: !Ref subnetIDs
+      PlatformVersion: LATEST
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+    DependsOn: dexlkListenerEx
+Outputs:
+  userTdEx:
+    Description: The created user task definition.
+    Value: !Ref userTdEx
+  walletTdEx:
+    Description: The created wallet task definition.
+    Value: !Ref walletTdEx
+  exchangeTdEx:
+    Description: The created exchange task definition.
+    Value: !Ref exchangeTdEx
+  dexlkClusterEx:
+    Description: The created cluster.
+    Value: !Ref dexlkClusterEx
+  userTargetGroupEx:
+    Description: The created user target group.
+    Value: !Ref userTargetGroupEx
+  walletTargetGroupEx:
+    Description: The created wallet target group.
+    Value: !Ref walletTargetGroupEx
+  exchangeTargetGroupEx:
+    Description: The created exchange target group.
+    Value: !Ref exchangeTargetGroupEx
+  dexlkLoadBalancerEx:
+    Description: The created load balancer.
+    Value: !Ref dexlkLoadBalancerEx
+  dexlkListenerEx:
+    Description: The created listener.
+    Value: !Ref dexlkListenerEx
+  walletListenerRuleEx:
+    Description: The created wallet listener rule.
+    Value: !Ref walletListenerRuleEx
+  exchangeListenerRuleEx:
+    Description: The created exchange listener.
+    Value: !Ref exchangeListenerRuleEx
+  userServiceEx:
+    Description: The created user service.
+    Value: !Ref userServiceEx
+  walletServiceEx:
+    Description: The created wallet service.
+    Value: !Ref walletServiceEx
+  exchangeServiceEx:
+    Description: The created exchange service.
+    Value: !Ref exchangeServiceEx
