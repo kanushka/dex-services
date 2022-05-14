@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  userTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "Username"
+          AttributeType: "S"
+        - AttributeName: "UserId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "Username"
+          KeyType: "HASH"
+        - AttributeName: "UserId"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      TableName: "User"
+  walletTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "UserId"
+          AttributeType: "S"
+        - AttributeName: "Address"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "UserId"
+          KeyType: "HASH"
+        - AttributeName: "Address"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      TableName: "Wallet"
+  transactionTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "Address"
+          AttributeType: "S"
+        - AttributeName: "CreatedAt"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "Address"
+          KeyType: "HASH"
+        - AttributeName: "CreatedAt"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      TableName: "Transaction"

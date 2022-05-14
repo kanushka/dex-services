@@ -1,125 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
 Metadata:
-  "AWS::CloudFormation::Designer":
-    058cccb8-db08-47f9-a913-bb6b0670c77b:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 120
-        "y": -10
-      z: 1
-      embeds: []
-    03d41b7d-2669-4217-8288-be5b81392058:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 120
-        "y": 60
-      z: 1
-      embeds: []
-    ed794dd7-71f5-41d3-9711-28c15d70976c:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 120
-        "y": 120
-      z: 1
-      embeds: []
-    52073879-a57f-4dd9-b392-05aa5757f195:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 440
-        "y": -60
-      z: 1
-      embeds: []
-      dependson:
-        - 96a435ba-e086-4af2-ad6a-3cb3d55daf78
-    25b658a3-92ab-41f9-85aa-4c2f33ffd370:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 270
-        "y": 30
-      z: 1
-      embeds: []
-    96a435ba-e086-4af2-ad6a-3cb3d55daf78:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 550
-        "y": -150
-      z: 1
-      embeds: []
-    ffdac18c-7d17-4588-9db4-ed509a6f4d0b:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 470
-        "y": 100
-      z: 1
-      embeds: []
-    176e2a11-ed35-46c7-b222-3fbcbacd8e02:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 270
-        "y": 90
-      z: 1
-      embeds: []
-    7dae8e48-26db-4572-bf46-a07d18630029:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 270
-        "y": 150
-      z: 1
-      embeds: []
-    6efe9680-e1bf-42aa-9c17-0f8dcb236144:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 650
-        "y": -20
-      z: 1
-      embeds: []
-    ce989346-c2ff-41f8-ad1c-09983873aad2:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 650
-        "y": 60
-      z: 1
-      embeds: []
-    50124b0e-df0a-4dd1-b98e-7fe7d9373c32:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 650
-        "y": 140
-      z: 1
-      embeds: []
-    781b460a-bb2d-44d9-b1a0-686f49dbb08d:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 520
-        "y": 250
-      z: 0
-      embeds: []
   "AWS::CloudFormation::Interface":
     ParameterGroups:
       - Label:
@@ -196,9 +76,6 @@ Resources:
               Value: !Ref awsDefaultRegion
             - Name: appEnv
               Value: !Ref awsAccessKeyId
-    Metadata:
-      "AWS::CloudFormation::Designer":
-        id: 058cccb8-db08-47f9-a913-bb6b0670c77b
   walletTdEx:
     Type: "AWS::ECS::TaskDefinition"
     Properties:
@@ -235,9 +112,6 @@ Resources:
               Value: !Ref awsDefaultRegion
             - Name: appEnv
               Value: !Ref awsAccessKeyId
-    Metadata:
-      "AWS::CloudFormation::Designer":
-        id: 03d41b7d-2669-4217-8288-be5b81392058
   exchangeTdEx:
     Type: "AWS::ECS::TaskDefinition"
     Properties:
@@ -274,9 +148,6 @@ Resources:
               Value: !Ref awsDefaultRegion
             - Name: appEnv
               Value: !Ref awsAccessKeyId
-    Metadata:
-      "AWS::CloudFormation::Designer":
-        id: ed794dd7-71f5-41d3-9711-28c15d70976c
   dexlkClusterEx:
     Type: "AWS::ECS::Cluster"
     Properties:
@@ -353,7 +224,7 @@ Resources:
           Values:
             - /wallet*
       ListenerArn: !Ref dexlkListenerEx
-      Priority: 1
+      Priority: 2
   exchangeListenerRuleEx:
     Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
     Properties:
@@ -365,7 +236,7 @@ Resources:
           Values:
             - /exchange*
       ListenerArn: !Ref dexlkListenerEx
-      Priority: 2
+      Priority: 3
   userServiceEx:
     Type: 'AWS::ECS::Service'
     Properties:

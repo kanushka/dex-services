@@ -17,7 +17,8 @@ def get_user(username):
         KeyConditionExpression='Username = :username',
         ExpressionAttributeValues={
             ':username': {'S': str(username)}
-        }
+        },
+        ProjectionExpression='UserId,Username,CreatedAt'
     )
 
 
@@ -45,7 +46,7 @@ def check_password(username, password):
 
     encrypted_password = str(util.encrypt_string(password))
     existing_password = ""
-    
+
     if 'Items' in response:
         if response['Items']:
             existing_password = str(response['Items'][0]['Password']['S'])
@@ -53,10 +54,10 @@ def check_password(username, password):
     if existing_password.__eq__(encrypted_password):
         return {
             'Login': True,
-            'Token': str(uuid.uuid4()) #TODO: update token generation with JWT
+            # TODO: update token generation with JWT
+            'Token': str(uuid.uuid4())
         }
     else:
         return {
             'Login': False,
         }
-
