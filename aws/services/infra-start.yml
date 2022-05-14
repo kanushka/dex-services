@@ -181,7 +181,7 @@ Resources:
               awslogs-stream-prefix: ecs
               awslogs-create-group: "true"
             LogDriver: awslogs
-          Name: userTdEx
+          Name: userContainerEx
           Image: "659246662061.dkr.ecr.us-east-1.amazonaws.com/user:latest"
           Essential: true
           PortMappings:
@@ -220,7 +220,7 @@ Resources:
               awslogs-stream-prefix: ecs
               awslogs-create-group: "true"
             LogDriver: awslogs
-          Name: walletTdEx
+          Name: walletContainerEx
           Image: "659246662061.dkr.ecr.us-east-1.amazonaws.com/wallet:latest"
           Essential: true
           PortMappings:
@@ -259,7 +259,7 @@ Resources:
               awslogs-stream-prefix: ecs
               awslogs-create-group: "true"
             LogDriver: awslogs
-          Name: exchangeTdEx
+          Name: exchangeContainerEx
           Image: "659246662061.dkr.ecr.us-east-1.amazonaws.com/exchange:latest"
           Essential: true
           PortMappings:
@@ -330,6 +330,18 @@ Resources:
       LoadBalancerArn: !Ref dexlkLoadBalancerEx
       Port: 80
       Protocol: HTTP
+  userListenerRuleEx:
+    Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
+    Properties:
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref userTargetGroupEx
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - /user*
+      ListenerArn: !Ref dexlkListenerEx
+      Priority: 1
   walletListenerRuleEx:
     Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
     Properties:
@@ -380,7 +392,7 @@ Resources:
         MinimumHealthyPercent: 100
       DeploymentController:
         Type: ECS
-    DependsOn: dexlkListenerEx
+    DependsOn: userListenerRuleEx
   walletServiceEx:
     Type: 'AWS::ECS::Service'
     Properties:
@@ -407,7 +419,7 @@ Resources:
         MinimumHealthyPercent: 100
       DeploymentController:
         Type: ECS
-    DependsOn: dexlkListenerEx
+    DependsOn: walletListenerRuleEx
   exchangeServiceEx:
     Type: 'AWS::ECS::Service'
     Properties:
@@ -434,7 +446,7 @@ Resources:
         MinimumHealthyPercent: 100
       DeploymentController:
         Type: ECS
-    DependsOn: dexlkListenerEx
+    DependsOn: exchangeListenerRuleEx
 Outputs:
   userTdEx:
     Description: The created user task definition.
@@ -463,6 +475,9 @@ Outputs:
   dexlkListenerEx:
     Description: The created listener.
     Value: !Ref dexlkListenerEx
+  userListenerRuleEx:
+    Description: The created user listener rule.
+    Value: !Ref userListenerRuleEx
   walletListenerRuleEx:
     Description: The created wallet listener rule.
     Value: !Ref walletListenerRuleEx
